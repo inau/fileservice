@@ -47,7 +47,7 @@ public class FilesController {
 
         if( result == null || result.isEmpty() ) return ResponseEntity.status(404).build();
         else {
-            GridfileMeta gfm = new GridfileMeta( result.get(0), result.size() );
+            GridfileMeta gfm = new GridfileMeta( result );
             return ResponseEntity.ok().body( gfm );
         }
     }

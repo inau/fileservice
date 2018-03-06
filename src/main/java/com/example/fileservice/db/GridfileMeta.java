@@ -2,18 +2,37 @@ package com.example.fileservice.db;
 
 import com.mongodb.gridfs.GridFSDBFile;
 
-public class GridfileMeta {
-    public final String filename, contentType;
-    public final int min_version, max_version;
+import java.util.ArrayList;
+import java.util.List;
 
-    public GridfileMeta(GridFSDBFile file, int max) {
-        this(file.getFilename(), file.getContentType(), 1, max);
+public class GridfileMeta {
+    static class VersionMeta {
+        public final String date;
+        public final Integer v;
+        public final String md5;
+
+        public VersionMeta(String d, int v, String md5) {
+            date = d;
+            this.v = v;
+            this.md5 = md5;
+        }
     }
 
-    public GridfileMeta(String filename, String contentType, int min_version, int max_version) {
+    public final String filename, contentType;
+//    public final int min_version, max_version;
+    public List<VersionMeta> versions = new ArrayList<>();
+
+    public GridfileMeta(List<GridFSDBFile> files) {
+        this(files.get(0).getFilename(), files.get(0).getContentType(), files);
+    }
+
+    public GridfileMeta(String filename, String contentType, List<GridFSDBFile> files) {
         this.filename = filename;
-        this.min_version = min_version;
-        this.max_version = max_version;
         this.contentType = contentType;
+
+        int i = 1;
+        for(GridFSDBFile f : files) {
+            versions.add( new VersionMeta(f.getUploadDate().toString(), i++, f.getMD5()) );
+        }
     }
 }
